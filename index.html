@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questionnaire pré-entretien — Bilan neuropsychologique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#156E88;
+    --teal-dark:#1f5266;
+    --turquoise:#36AFAE;
+    --pink:#EEB2A8;
+    --pink-text:#E27469;
+    --bg:#f4f6f7;
+    --card:#ffffff;
+    --ink:#222;
+    --muted:#666;
+    --flag-bg:#fff3b0;
+    --border:#dbe2e5;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size:17px; line-height:1.65;
+  }
+  header.letterhead{
+    background:var(--card); border-bottom:3px solid var(--turquoise);
+    padding:22px 24px; text-align:center;
+  }
+  header.letterhead .logo{ max-width:380px; width:85%; height:auto; display:block; margin:0 auto 8px; }
+  header.letterhead p{ margin:3px 0; font-size:12px; color:var(--muted);}
+  header.letterhead .qtitle{
+    font-family:"Fraunces", serif; font-size:27px; font-weight:600; color:var(--teal);
+    margin:20px auto 6px; max-width:720px; line-height:1.35; letter-spacing:0.2px;
+  }
+  .sticky-nav{ position:sticky; top:0; z-index:10; }
+  nav.toc{
+    background:var(--turquoise);
+    padding:9px 12px; overflow-x:auto; white-space:nowrap;
+  }
+  nav.toc a{
+    color:#fff; text-decoration:none; font-size:13.5px; margin-right:16px;
+    opacity:.85;
+  }
+  nav.toc a:hover{ opacity:1; text-decoration:underline; }
+  .progress-wrap{
+    background:var(--card); padding:10px 16px 12px; border-bottom:1px solid var(--border);
+  }
+  .progress-track{
+    max-width:820px; margin:0 auto;
+    height:10px; background:var(--bg);
+    border:1px solid var(--border); border-radius:999px; overflow:hidden;
+  }
+  .progress-fill{
+    height:100%; width:0%; background:linear-gradient(90deg, var(--turquoise), var(--teal-dark)); border-radius:999px;
+    transition:width .15s ease-out;
+  }
+  main{ max-width:820px; margin:30px auto 130px; padding:0 16px; }
+  .card{ background:var(--card); border-radius:8px; padding:26px 30px; margin-bottom:26px;
+    box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  h2.banner{
+    background:var(--teal); color:#fff; padding:10px 16px; border-radius:5px;
+    font-size:17.5px; margin:0 0 20px;
+  }
+  h3.subhead{ font-style:italic; text-decoration:underline; font-size:16px; margin:24px 0 12px; color:var(--teal-dark);}
+  p.hint{
+    font-size:14.5px; color:#7a5a1e; margin:0 0 18px;
+    border:1.5px solid #F1B357; background:rgba(241,179,87,0.14);
+    border-radius:6px; padding:11px 14px;
+  }
+  .q{ margin:20px 0; }
+  .qlabel{ font-size:16px; margin-bottom:8px; }
+  .yn{ display:flex; gap:20px; flex-wrap:wrap; }
+  .yn label{ font-size:15.5px; display:flex; align-items:center; gap:6px; cursor:pointer;}
+  .detail{ margin-top:10px; display:none; }
+  .detail.show{ display:block; }
+  .conditional-field{ display:none; }
+  .conditional-field.show{ display:block; }
+  .detail input[type=text], .detail textarea{ width:100%; }
+  input[type=text], input[type=number], textarea, select{
+    width:100%; padding:9px 11px; border:1px solid var(--border); border-radius:5px;
+    font-family:inherit; font-size:15.5px; background:#fbfcfd;
+  }
+  textarea{ resize:vertical; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .checks{ display:flex; flex-direction:column; gap:9px; }
+  .checks label{ font-size:15.5px; display:flex; align-items:center; gap:8px; }
+  .radiogroup{ display:flex; flex-direction:column; gap:10px; }
+  .radiogroup > label{ font-size:15.5px; display:flex; align-items:center; gap:8px; }
+  .indent{ margin-left:20px; padding-left:16px; border-left:2px solid var(--border); }
+  .field-inline{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+  .field-inline input[type=text]{ width:auto; flex:1; min-width:120px; }
+  .actions{
+    position:fixed; bottom:0; left:0; right:0; background:var(--card);
+    border-top:1px solid var(--border); padding:14px 16px; display:flex;
+    gap:12px; justify-content:center; flex-wrap:wrap; box-shadow:0 -2px 6px rgba(0,0,0,.06);
+  }
+  button{
+    background:var(--pink-text); color:#fff; border:none; padding:12px 20px; border-radius:6px;
+    font-size:15.5px; cursor:pointer; font-weight:600;
+  }
+  button.secondary{ background:#fff; color:var(--pink-text); border:1.5px solid var(--pink); }
+  button:hover{ opacity:.9; }
+  .note{
+    font-size:14.5px; color:#7a5a1e; text-align:center; max-width:820px; margin:20px auto 14px;
+    padding:12px 18px; border:1.5px solid #F1B357; background:rgba(241,179,87,0.14); border-radius:6px;
+  }
+  .req{ color:#b3251e; }
+  .status{ text-align:center; font-size:15px; margin-top:10px; min-height:20px; }
+  .status.sending{ color:var(--teal-dark); }
+  .status.sent{ color:#1a7a3c; font-weight:600; }
+  .status.error{ color:#b3251e; font-weight:600; }
+</style>
+</head>
+<body>
+
+<header class="letterhead">
+  <img class="logo" alt="Docteur Carline Bernard" src="data:image/png;base64,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">
+  <p>Psychologue · Neuropsychologue · Thérapeute TCC · Praticienne EMDR · Docteur en Sciences Cognitives</p>
+  <p>RPPS : 10008513433 · ADELI : 33 93 2206 5 · Tél : 07 66 86 87 16 · c.bernard.neuropsy@gmail.com</p>
+  <p class="qtitle">Questionnaire à remplir avant l'entretien préalable au bilan neuropsychologique</p>
+</header>
+
+<div class="sticky-nav">
+  <nav class="toc" id="toc"></nav>
+  <div class="progress-wrap">
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-fill" id="progressBar"></div>
+    </div>
+  </div>
+</div>
+
+<p class="note">
+  Merci de remplir ce questionnaire aussi précisément que possible avant votre rendez-vous.
+  Vos réponses restent sur votre ordinateur jusqu'à l'envoi. Une fois terminé, cliquez sur
+  <strong>« Envoyer au cabinet »</strong> : le document sera transmis automatiquement par email.
+</p>
+
+<main id="main"></main>
+
+<iframe name="hidden_gas_iframe" style="display:none;"></iframe>
+<form id="gas_form" method="POST" target="hidden_gas_iframe" style="display:none;">
+  <input type="hidden" name="nom" id="gas_nom">
+  <input type="hidden" name="html" id="gas_html">
+  <input type="hidden" name="token" id="gas_token">
+</form>
+
+<div class="actions" style="flex-direction:column;">
+  <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+    <button onclick="sendByEmail()">✉️ Envoyer au cabinet</button>
+    <button class="secondary" onclick="generateWordDoc()">📄 Télécharger le document (.doc)</button>
+    <button class="secondary" onclick="printForm()">🖨️ Imprimer / Enregistrer en PDF</button>
+  </div>
+  <div id="sendStatus" class="status"></div>
+</div>
+
+<script>
+/* =========================================================================
+   CONFIGURATION DE L'ENVOI AUTOMATIQUE PAR EMAIL
+   À renseigner après déploiement du script Google Apps Script (voir le
+   guide de configuration fourni séparément). Tant que GAS_URL n'est pas
+   renseignée, le bouton "Envoyer au cabinet" affiche un message d'erreur
+   au lieu d'échouer silencieusement.
+   ========================================================================= */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbx9Shg8vBRrO6I1qNRiSbvl_SusoL_CGQyMFAcIXO_Y3dCoCuV4jhdMMTysqgCMFSTw/exec";
+const GAS_TOKEN = "carline-neuropsy-2026"; // doit être identique à SHARED_TOKEN dans le script Google
+
+/* =========================================================================
+   SCHÉMA DU QUESTIONNAIRE
+   Chaque section reprend l'ordre et le contenu du document "Doc C1 adulte".
+   Ce même schéma pilote à la fois l'affichage du formulaire et la
+   génération du document final.
+   ========================================================================= */
+
+const SECTIONS = [
+{
+  id: "identite", title: "Identité du patient", fields: [
+    {t:"text", id:"nom", label:"Nom Prénom", required:true},
+    {t:"text", id:"naissance_date", label:"Date de naissance (JJ/MM/AAAA)"},
+    {t:"text", id:"age", label:"Âge"},
+  ]
+},
+{
+  id: "motif", title: "Problématique principale qui motive le bilan", fields: [
+    {t:"textarea", id:"motif_texte", label:"Décrivez ici le motif de votre démarche", rows:5, flag:true},
+    {t:"yn", id:"adresse_pro", label:"Êtes-vous adressé(e) par un professionnel ?",
+      detail:{placeholder:"Lequel, et pourquoi ?"}},
+  ]
+},
+{
+  id: "perinatale", title: "Histoire périnatale",
+  note: "Certaines informations peuvent figurer sur votre carnet de santé.",
+  fields: [
+    {t:"radio", id:"conception", label:"Conception ?", opts:[
+        {v:"Spontanée", label:"Spontanée"},
+        {v:"PMA", label:"PMA", flag:true, detail:{placeholder:"Précisez"}},
+      ]},
+    {t:"yn", id:"consanguinite", label:"Consanguinité ?"},
+    {t:"yn", id:"saignements", label:"Saignements pendant la grossesse ?",
+      detail:{placeholder:"À quel trimestre ?"}},
+    {t:"checks", id:"pathologies_grossesse", label:"Pathologies liées à la grossesse ?",
+      opts:["Diabète","Hypertension artérielle","Prééclampsie"], other:true},
+    {t:"checks", id:"infections_grossesse", label:"Infections pendant la grossesse ?",
+      opts:["Toxoplasmose","CMV","Grippe"], other:true},
+    {t:"yn", id:"medicaments_grossesse", label:"Médicaments pendant la grossesse ?",
+      detail:{placeholder:"Lesquels, et à quel trimestre ?"}},
+    {t:"yn3", id:"tox_tabac", label:"Tabac pendant la grossesse", opts:["Oui","Non"], detail:{placeholder:"Fréquence"}},
+    {t:"yn3", id:"tox_alcool", label:"Alcool pendant la grossesse", opts:["Oui","Non"], detail:{placeholder:"Fréquence"}},
+    {t:"yn", id:"tox_autre_grossesse", label:"Autre substance pendant la grossesse ?", detail:{placeholder:"Précisez"}},
+    {t:"text", id:"age_mere", label:"Âge de votre mère à votre naissance"},
+    {t:"text", id:"age_pere", label:"Âge de votre père à votre naissance"},
+    {t:"radio", id:"terme", label:"Âge gestationnel à la naissance ?", opts:[
+        {v:"À terme", label:"À terme"},
+        {v:"Prématurée", label:"Prématurée", flag:true, detail:{placeholder:"Nombre de SA"}},
+        {v:"Post-terme", label:"Post-terme", detail:{placeholder:"Jours après la date prévue"}},
+      ]},
+    {t:"multi", id:"mode_naissance", label:"Modalités de la naissance ?", other:true, opts:[
+        {v:"Spontanée", label:"Spontanée"},
+        {v:"Déclenchée", label:"Déclenchée", detail:{placeholder:"Précisez"}},
+        {v:"Voie basse non instrumentale", label:"Voie basse non instrumentale"},
+        {v:"Extraction voie basse instrumentale", label:"Extraction voie basse instrumentale", flag:true, detail:{placeholder:"Précisez"}},
+        {v:"Césarienne programmée", label:"Césarienne programmée", flag:true, detail:{placeholder:"Indication"}},
+        {v:"Césarienne en urgence", label:"Césarienne en urgence", flag:true, detail:{placeholder:"Indication"}},
+      ]},
+    {t:"yn", id:"fievre_maternelle", label:"Fièvre maternelle ?"},
+    {t:"yn", id:"cri_retarde", label:"Cri retardé ?"},
+    {t:"text", id:"poids_naissance", label:"Poids de naissance"},
+    {t:"text", id:"apgar1", label:"Score d'APGAR à 1 minute"},
+    {t:"text", id:"apgar5", label:"Score d'APGAR à 5 minutes"},
+    {t:"text", id:"apgar10", label:"Score d'APGAR à 10 minutes"},
+    {t:"yn", id:"traitements_naissance", label:"Traitements reçus à la naissance ?", detail:{placeholder:"Lesquels ?"}},
+    {t:"yn", id:"neonat", label:"Transfert ou hospitalisation en néonatologie ?", detail:{placeholder:"Pourquoi ?"}},
+    {t:"yn", id:"examen_normal", label:"Examen clinique normal des premiers jours de vie ?", flagOn:"Non", detailShowOn:"Non",
+      detail:{placeholder:"Si non, précisez"}},
+  ]
+},
+{
+  id: "petite_enfance", title: "Petite enfance", fields: [
+    {t:"yn", id:"babille", label:"Avez-vous babillé (dadada, bababa, papapa…) ?"},
+    {t:"text", id:"age_premiers_mots", label:"Âge de production des premiers mots"},
+    {t:"text", id:"age_premieres_phrases", label:"Âge de production des premières phrases"},
+    {t:"yn", id:"particularite_langage", label:"Vos parents et/ou votre entourage ont-ils remarqué quelque chose de particulier dans votre façon de parler quand vous étiez petit(e) (parler comme un adulte, répéter des mots/phrases en boucle, se tromper de pronoms, etc.) ?",
+      detail:{placeholder:"Précisez"}},
+    {t:"text", id:"age_marche", label:"Âge d'acquisition de la marche"},
+    {t:"yn", id:"marche_4pattes", label:"Êtes-vous passé(e) par la marche à 4 pattes ?"},
+    {t:"text", id:"proprete_diurne", label:"Âge d'acquisition de la propreté diurne"},
+    {t:"text", id:"proprete_nocturne", label:"Âge d'acquisition de la propreté nocturne"},
+    {t:"yn", id:"difficulte_proprete", label:"Avez-vous présenté des difficultés particulières liées à la propreté (accidents réguliers, énurésie...) ?", detail:{placeholder:"Précisez"}},
+    {t:"textarea", id:"sociabilite", label:"Comment décririez-vous votre tempérament de bébé/jeune enfant, et vos relations avec les autres enfants ?", rows:3, flag:false},
+    {t:"textarea", id:"jeu", label:"À quoi jouiez-vous, seul(e) ou avec d'autres enfants ?", rows:2, flag:false},
+    {t:"textarea", id:"centres_interet_enfance", label:"Quels étaient vos centres d'intérêt ?", rows:2, flag:false},
+    {t:"yn", id:"regression", label:"Avez-vous eu, enfant, une perte ou un ralentissement de vos acquisitions (langage, motricité, sociabilité, propreté) après une période de développement normal ?",
+      detail:{placeholder:"Précisez le domaine et l'âge"}},
+  ]
+},
+{
+  id: "medicale", title: "Histoire médicale", fields: [
+    {t:"yn", id:"perte_connaissance", label:"Avez-vous déjà perdu connaissance ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"convulsions", label:"Avez-vous déjà eu des convulsions ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"epilepsie", label:"Avez-vous déjà eu des crises d'épilepsie ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"tc", label:"Avez-vous déjà eu un traumatisme crânien ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"avc", label:"Avez-vous déjà eu un AVC ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"operations", label:"Avez-vous déjà été opéré(e) ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"urgences", label:"Êtes-vous souvent passé(e) par les urgences médicales ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"hospitalisation", label:"Avez-vous déjà été hospitalisé(e) ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"medicaments_actuels", label:"Prenez-vous des médicaments actuellement ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"medicaments_passes", label:"Avez-vous déjà essayé un traitement médicamenteux par le passé pour vos difficultés actuelles ?",
+      detail:{placeholder:"Lesquels, et avec quels effets bénéfiques et indésirables ?"}},
+    {t:"yn", id:"orl_enfance", label:"Durant votre enfance, avez-vous eu beaucoup d'infections de la sphère ORL (angines, otites, rhinopharyngites) ?"},
+    {t:"yn", id:"orl_controle_ensuite", label:"Un contrôle ORL a-t-il été effectué ensuite ?", showIf:{field:"orl_enfance", value:"Oui"}},
+    {t:"yn", id:"orl_controle_recent", label:"Un contrôle ORL a-t-il été effectué récemment ?", detail:{placeholder:"Précisez (date, résultat)"}},
+    {t:"yn", id:"correction_vue", label:"Portez-vous des corrections pour pallier des problèmes de vue ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"controle_ophtalmo_recent", label:"Un contrôle ophtalmologique a-t-il été effectué récemment ?", detail:{placeholder:"Précisez (date, résultat)"}},
+    {t:"yn", id:"bilan_somatique", label:"Un bilan somatique ou neurologique a-t-il déjà été réalisé par un médecin (médecin généraliste, neurologue…) en lien avec le motif de ce bilan ?",
+      detail:{placeholder:"Par qui, et quand ?"}},
+    {t:"yn3", id:"tox_tabac_actuel", label:"Consommez-vous, ou avez-vous consommé, du tabac ?", opts:["Oui actuellement","Oui par le passé","Non"], detail:{placeholder:"Précisez"}},
+    {t:"yn3", id:"tox_alcool_actuel", label:"Consommez-vous, ou avez-vous consommé, de l'alcool ?", opts:["Oui actuellement","Oui par le passé","Non"], detail:{placeholder:"Précisez"}},
+    {t:"yn3", id:"tox_autre_actuel", label:"Consommez-vous, ou avez-vous consommé, d'autres substances ?", opts:["Oui actuellement","Oui par le passé","Non"], detail:{placeholder:"Précisez"}},
+  ]
+},
+{
+  id: "antecedents_perso", title: "Antécédents personnels", fields: [
+    {t:"yn", id:"diag_dystdahtsa", label:"Avez-vous déjà reçu un diagnostic de trouble DYS / TDAH / TSA ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"diag_psy", label:"Avez-vous déjà reçu un diagnostic de trouble psychiatrique ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"diag_personnalite", label:"Avez-vous déjà reçu un diagnostic de trouble de la personnalité ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"autres_pb_sante", label:"Y a-t-il d'autres problèmes de santé notables vous concernant ?", detail:{placeholder:"Précisez"}},
+  ]
+},
+{
+  id: "evaluations", title: "Évaluations et prises en soins (actuelles et passées)", fields: [
+    {t:"yn", id:"suivi_psychiatre", label:"Psychiatre / pédopsychiatre", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"suivi_psychologue", label:"Psychologue", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"suivi_orthophoniste", label:"Orthophoniste", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"suivi_orthoptiste", label:"Orthoptiste", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"suivi_psychomotricien", label:"Psychomotricien", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"suivi_ergotherapeute", label:"Ergothérapeute", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"suivi_kinesitherapeute", label:"Kinésithérapeute", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"autres_suivis", label:"D'autres suivis à mentionner ?", detail:{placeholder:"Précisez"}},
+  ]
+},
+{
+  id: "antecedents_familiaux", title: "Antécédents familiaux",
+  note: "Y-a-t-il, dans votre famille (parents, frères/sœurs, grands-parents, oncles/tantes, cousins/cousines), des personnes présentant :",
+  fields: [
+    {t:"yn", id:"fam_tnd", label:"Un trouble du neurodéveloppement (TDAH, troubles DYS, TSA, déficience intellectuelle, syndrome de Gilles de la Tourette…) ?",
+      detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"fam_psy", label:"Un trouble psychiatrique (trouble anxieux, trouble dépressif, schizophrénie, trouble bipolaire, addiction, anorexie/boulimie…) ?",
+      detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"fam_personnalite", label:"Un trouble de la personnalité ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"fam_autres_pb", label:"D'autres problèmes de santé notables dans votre famille ?", detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"fam_hpi", label:"Un Haut Potentiel Intellectuel (HPI) ?", detail:{placeholder:"Précisez"}},
+  ]
+},
+{
+  id: "histoire_perso", title: "Histoire personnelle",
+  note: "Quels sont les événements qui ont marqué votre vie (déménagements, naissances, décès, maladies, mariages, séparations, divorces, placements en famille d'accueil, ruptures sentimentales, accidents, licenciements, pertes significatives, conflits, harcèlement, abus (physique, émotionnel, sexuel), violences (témoin, victime, agresseur), tentatives de suicide…) ? Précisez, SVP, et notez à quel âge vous les avez vécus.",
+  fields: [
+    {t:"yn", id:"evt_conflits_parents", label:"Conflits entre les parents / Séparation", detail:{placeholder:"Précisez, et à quel âge"}},
+    {t:"yn", id:"evt_recomposition", label:"Recomposition familiale", detail:{placeholder:"Précisez, et à quel âge"}},
+    {t:"yn", id:"evt_financier", label:"Situation financière difficile", detail:{placeholder:"Précisez, et à quel âge"}},
+    {t:"yn", id:"evt_demenagement", label:"Déménagement", detail:{placeholder:"Précisez, et à quel âge"}},
+    {t:"yn", id:"evt_deuil", label:"Maladie ou décès d'un proche", detail:{placeholder:"Précisez, et à quel âge"}},
+    {t:"yn", id:"evt_abus", label:"Abus / violence / négligence", detail:{placeholder:"Précisez, et à quel âge"}},
+    {t:"yn", id:"evt_autre", label:"Autres situations de stress importantes à mentionner (harcèlement, rupture sentimentale, licenciement, naissance...)", detail:{placeholder:"Précisez, et à quel âge"}},
+  ]
+},
+{
+  id: "fonctionnement", title: "Fonctionnement, intérêts et routines", fields: [
+    {t:"yn", id:"interets_marques", label:"Avez-vous des intérêts très marqués ou circonscrits, qui occupent une place importante dans votre quotidien ?",
+      detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"comportements_repetitifs", label:"Avez-vous des comportements répétitifs ou des stéréotypies (gestuelles ou verbales) ?",
+      detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"besoin_routines", label:"Avez-vous besoin de routines ou de rituels, avec des difficultés en cas de changement d'organisation ?",
+      detail:{placeholder:"Précisez"}},
+    {t:"yn", id:"imprevus_difficiles", label:"Les imprévus ou changements non anticipés sont-ils difficiles à vivre pour vous ?",
+      detail:{placeholder:"Précisez"}},
+  ]
+},
+{
+  id: "plaintes", title: "Plaintes et gênes (actuelles et passées)",
+  note: "Quand et comment le problème est-il apparu ? Retracez les différentes étapes de l'évolution et les variations d'intensité du problème, et notez vos tentatives de solution passées (automédication, tabac, alcool, « ne pas y penser », me relaxer, faire du sport, manger…)",
+  fields: [
+    {t:"textarea", id:"plaintes_texte", label:"Votre réponse", rows:8, flag:true},
+  ]
+},
+];
+
+/* =========================================================================
+   RENDU DU FORMULAIRE
+   ========================================================================= */
+
+function el(tag, attrs, ...children){
+  const e = document.createElement(tag);
+  if(attrs) for(const k in attrs){
+    if(k === "html") e.innerHTML = attrs[k];
+    else if(k.startsWith("on")) e.addEventListener(k.slice(2), attrs[k]);
+    else e.setAttribute(k, attrs[k]);
+  }
+  children.flat().forEach(c => { if(c!=null) e.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+  return e;
+}
+
+function cleanLabel(label){
+  return label.replace(/\s*\?\s*$/,"").replace(/\s+$/,"");
+}
+
+function buildDetail(field, forValue){
+  const wrap = el("div", {class:"detail", id: field.id+"_detailwrap"});
+  const inp = el("input", {type:"text", id: field.id+"_d", placeholder: (field.detail && field.detail.placeholder) || "Précisez"});
+  wrap.appendChild(inp);
+  return wrap;
+}
+
+function toggleYnDetail(field){
+  const wrap = document.getElementById(field.id+"_detailwrap");
+  if(!wrap) return;
+  const checked = document.querySelector(`input[name="${field.id}"]:checked`);
+  const showVal = field.detailShowOn || "Oui";
+  wrap.classList.toggle("show", !!checked && checked.value === showVal);
+}
+
+function toggleYn3Detail(field){
+  const wrap = document.getElementById(field.id+"_detailwrap");
+  if(!wrap) return;
+  const checked = document.querySelector(`input[name="${field.id}"]:checked`);
+  wrap.classList.toggle("show", !!checked && checked.value !== "Non");
+}
+
+/* Radio buttons are normally impossible to un-select once clicked. Since
+   patients may pick "oui"/"non" by mistake and want to clear the answer
+   rather than pick the opposite one, every radio input in the form is made
+   "deselectable": clicking an already-selected option unchecks it. We track
+   each radio's own previous checked state (_prevChecked) because by the time
+   a click listener runs, the browser has already applied its native toggle —
+   there is no other reliable way to detect "this was already selected". */
+function makeDeselectableRadio(attrs){
+  const input = el("input", attrs);
+  input._prevChecked = false;
+  input.addEventListener("click", function(){
+    if(input._prevChecked){
+      input.checked = false;
+      input.dispatchEvent(new Event("change", {bubbles:true}));
+    }
+    document.querySelectorAll(`input[name="${input.name}"]`).forEach(r => { r._prevChecked = r.checked; });
+  });
+  return input;
+}
+
+/* Fields marked with `showIf:{field, value}` are rendered inside a wrapper
+   that starts hidden and only becomes visible once the referenced field
+   (elsewhere in the form) is answered with the matching value. This lets a
+   question like "Un contrôle ORL a-t-il été effectué ensuite ?" only appear
+   once the patient has answered "oui" to the preceding ORL question. */
+function appendFieldNode(field, node, container){
+  if(field.showIf){
+    const wrap = el("div", {class:"conditional-field", id: field.id+"_fieldwrap"});
+    wrap.appendChild(node);
+    container.appendChild(wrap);
+  } else {
+    container.appendChild(node);
+  }
+}
+
+function renderField(field, container){
+  if(field.t === "text"){
+    appendFieldNode(field, el("div", {class:"q"},
+      el("div", {class:"qlabel"}, field.label + (field.required? " *":"")),
+      el("input", {type:"text", id:field.id})
+    ), container);
+  }
+  else if(field.t === "textarea"){
+    appendFieldNode(field, el("div", {class:"q"},
+      el("div", {class:"qlabel"}, field.label),
+      el("textarea", {id:field.id, rows: field.rows || 3})
+    ), container);
+  }
+  else if(field.t === "yn"){
+    const q = el("div", {class:"q"});
+    q.appendChild(el("div", {class:"qlabel"}, cleanLabel(field.label) + " ?"));
+    const yn = el("div", {class:"yn"});
+    ["Oui","Non"].forEach(v=>{
+      const id = field.id+"_"+v;
+      yn.appendChild(el("label", {},
+        makeDeselectableRadio({type:"radio", name:field.id, value:v, id:id, onchange:()=>toggleYnDetail(field)}),
+        v
+      ));
+    });
+    q.appendChild(yn);
+    if(field.detail){
+      q.appendChild(buildDetail(field));
+    }
+    appendFieldNode(field, q, container);
+  }
+  else if(field.t === "yn3"){
+    const q = el("div", {class:"q"});
+    q.appendChild(el("div", {class:"qlabel"}, cleanLabel(field.label) + " ?"));
+    const yn = el("div", {class:"yn"});
+    field.opts.forEach(v=>{
+      const id = field.id+"_"+v.replace(/\s+/g,"_");
+      yn.appendChild(el("label", {},
+        makeDeselectableRadio({type:"radio", name:field.id, value:v, id:id, onchange:()=>toggleYn3Detail(field)}),
+        v
+      ));
+    });
+    q.appendChild(yn);
+    if(field.detail){
+      const wrap = el("div", {class:"detail", id: field.id+"_detailwrap"});
+      wrap.appendChild(el("input", {type:"text", id:field.id+"_d", placeholder:field.detail.placeholder||"Précisez"}));
+      q.appendChild(wrap);
+    }
+    appendFieldNode(field, q, container);
+  }
+  else if(field.t === "radio"){
+    const q = el("div", {class:"q"});
+    q.appendChild(el("div", {class:"qlabel"}, field.label));
+    const group = el("div", {class:"radiogroup"});
+    field.opts.forEach(opt=>{
+      const optId = field.id+"_"+opt.v.replace(/\s+/g,"_");
+      const rowChildren = [
+        makeDeselectableRadio({type:"radio", name:field.id, value:opt.v, id:optId, onchange:()=>updateRadioDetails(field)}),
+        opt.label
+      ];
+      group.appendChild(el("label", {}, rowChildren));
+      if(opt.detail){
+        const dwrap = el("div", {class:"detail indent", id: field.id+"_"+opt.v.replace(/\s+/g,"_")+"_detailwrap"});
+        dwrap.appendChild(el("input", {type:"text", id: field.id+"_"+opt.v.replace(/\s+/g,"_")+"_d", placeholder:opt.detail.placeholder||"Précisez"}));
+        group.appendChild(dwrap);
+      }
+    });
+    q.appendChild(group);
+    appendFieldNode(field, q, container);
+  }
+  else if(field.t === "multi"){
+    // Checkboxes: several options can be selected at once (unlike "radio").
+    // Each option can independently reveal its own "précisez" field.
+    const q = el("div", {class:"q"});
+    q.appendChild(el("div", {class:"qlabel"}, field.label));
+    const group = el("div", {class:"radiogroup"});
+    field.opts.forEach(opt=>{
+      const optId = field.id+"_"+opt.v.replace(/\s+/g,"_");
+      group.appendChild(el("label", {},
+        el("input", {type:"checkbox", name:field.id, value:opt.v, id:optId, onchange:()=>updateMultiDetail(field, opt)}),
+        opt.label
+      ));
+      if(opt.detail){
+        const dwrap = el("div", {class:"detail indent", id: optId+"_detailwrap"});
+        dwrap.appendChild(el("input", {type:"text", id: optId+"_d", placeholder:opt.detail.placeholder||"Précisez"}));
+        group.appendChild(dwrap);
+      }
+    });
+    if(field.other){
+      group.appendChild(el("label", {},
+        el("input", {type:"text", id:field.id+"_other", placeholder:"Autre (précisez)"})
+      ));
+    }
+    q.appendChild(group);
+    appendFieldNode(field, q, container);
+  }
+  else if(field.t === "checks"){
+    const q = el("div", {class:"q"});
+    q.appendChild(el("div", {class:"qlabel"}, field.label));
+    const group = el("div", {class:"checks"});
+    field.opts.forEach((opt,i)=>{
+      const cid = field.id+"_c"+i;
+      group.appendChild(el("label", {},
+        el("input", {type:"checkbox", id:cid, "data-group":field.id, value:opt}),
+        opt
+      ));
+    });
+    if(field.other){
+      group.appendChild(el("label", {},
+        el("input", {type:"text", id:field.id+"_other", placeholder:"Autre (précisez)"})
+      ));
+    }
+    q.appendChild(group);
+    appendFieldNode(field, q, container);
+  }
+}
+
+function updateRadioDetails(field){
+  const checked = document.querySelector(`input[name="${field.id}"]:checked`);
+  field.opts.forEach(opt=>{
+    if(!opt.detail) return;
+    const wrap = document.getElementById(field.id+"_"+opt.v.replace(/\s+/g,"_")+"_detailwrap");
+    if(wrap) wrap.classList.toggle("show", checked && checked.value === opt.v);
+  });
+}
+
+// Unlike a radio group, each "multi" checkbox is independent: only that
+// option's own detail field needs to show/hide based on ITS checked state.
+function updateMultiDetail(field, opt){
+  if(!opt.detail) return;
+  const optId = field.id+"_"+opt.v.replace(/\s+/g,"_");
+  const cb = document.getElementById(optId);
+  const wrap = document.getElementById(optId+"_detailwrap");
+  if(wrap) wrap.classList.toggle("show", !!(cb && cb.checked));
+}
+
+// Wires up every field that declared `showIf`: listens for changes on the
+// referenced field's radios and toggles this field's wrapper accordingly.
+// Runs once after the whole form has been rendered.
+function wireConditionals(){
+  SECTIONS.forEach(section=>{
+    section.fields.forEach(field=>{
+      if(!field.showIf) return;
+      const wrap = document.getElementById(field.id+"_fieldwrap");
+      if(!wrap) return;
+      const refName = field.showIf.field;
+      const refValue = field.showIf.value;
+      const update = () => {
+        const checked = document.querySelector(`input[name="${refName}"]:checked`);
+        wrap.classList.toggle("show", !!checked && checked.value === refValue);
+      };
+      document.querySelectorAll(`input[name="${refName}"]`).forEach(inp=>{
+        inp.addEventListener("change", update);
+      });
+      update();
+    });
+  });
+}
+
+function renderAll(){
+  const main = document.getElementById("main");
+  const toc = document.getElementById("toc");
+  SECTIONS.forEach(section=>{
+    toc.appendChild(el("a", {href:"#"+section.id}, section.title));
+    const card = el("div", {class:"card", id:section.id});
+    card.appendChild(el("h2", {class:"banner"}, section.title));
+    if(section.note) card.appendChild(el("p", {class:"hint"}, section.note));
+    section.fields.forEach(f=>renderField(f, card));
+    main.appendChild(card);
+  });
+}
+renderAll();
+wireConditionals();
+document.getElementById("main").addEventListener("input", updateProgress);
+document.getElementById("main").addEventListener("change", updateProgress);
+updateProgress();
+
+/* =========================================================================
+   COLLECTE DES RÉPONSES
+   ========================================================================= */
+
+function getYnValue(field){
+  const checked = document.querySelector(`input[name="${field.id}"]:checked`);
+  const val = checked ? checked.value : "";
+  const detailEl = document.getElementById(field.id+"_d");
+  const detail = detailEl ? detailEl.value.trim() : "";
+  return {val, detail};
+}
+
+function collectAnswers(){
+  const data = {};
+  SECTIONS.forEach(section=>{
+    data[section.id] = {};
+    section.fields.forEach(field=>{
+      if(field.t === "text" || field.t === "textarea"){
+        const elx = document.getElementById(field.id);
+        data[section.id][field.id] = {value: elx ? elx.value.trim() : ""};
+      }
+      else if(field.t === "yn" || field.t === "yn3"){
+        data[section.id][field.id] = getYnValue(field);
+      }
+      else if(field.t === "radio"){
+        const checked = document.querySelector(`input[name="${field.id}"]:checked`);
+        const val = checked ? checked.value : "";
+        let detail = "";
+        if(checked){
+          const opt = field.opts.find(o=>o.v===val);
+          if(opt && opt.detail){
+            const de = document.getElementById(field.id+"_"+val.replace(/\s+/g,"_")+"_d");
+            detail = de ? de.value.trim() : "";
+          }
+        }
+        data[section.id][field.id] = {val, detail};
+      }
+      else if(field.t === "multi"){
+        const selected = [];
+        field.opts.forEach(opt=>{
+          const optId = field.id+"_"+opt.v.replace(/\s+/g,"_");
+          const cb = document.getElementById(optId);
+          if(cb && cb.checked){
+            let detail = "";
+            if(opt.detail){
+              const de = document.getElementById(optId+"_d");
+              detail = de ? de.value.trim() : "";
+            }
+            selected.push({v: opt.v, detail, flag: !!opt.flag});
+          }
+        });
+        let other = "";
+        if(field.other){
+          const otherEl = document.getElementById(field.id+"_other");
+          other = otherEl ? otherEl.value.trim() : "";
+        }
+        data[section.id][field.id] = {selected, other};
+      }
+      else if(field.t === "checks"){
+        const selected = [];
+        field.opts.forEach((opt,i)=>{
+          const c = document.getElementById(field.id+"_c"+i);
+          if(c && c.checked) selected.push(opt);
+        });
+        const otherEl = document.getElementById(field.id+"_other");
+        const other = otherEl ? otherEl.value.trim() : "";
+        data[section.id][field.id] = {selected, other};
+      }
+    });
+  });
+  return data;
+}
+
+/* =========================================================================
+   BARRE DE PROGRESSION (proportion de champs remplis)
+   ========================================================================= */
+
+function isAnswered(field, answer){
+  if(field.t === "text" || field.t === "textarea") return !!answer.value;
+  if(field.t === "yn" || field.t === "yn3" || field.t === "radio") return !!answer.val;
+  if(field.t === "multi" || field.t === "checks") return (answer.selected && answer.selected.length > 0) || !!answer.other;
+  return false;
+}
+
+function updateProgress(){
+  const data = collectAnswers();
+  let total = 0, answered = 0;
+  SECTIONS.forEach(section=>{
+    section.fields.forEach(field=>{
+      total++;
+      if(isAnswered(field, data[section.id][field.id])) answered++;
+    });
+  });
+  const bar = document.getElementById("progressBar");
+  if(bar) bar.style.width = (total > 0 ? Math.round((answered/total)*100) : 0) + "%";
+}
+
+/* =========================================================================
+   GÉNÉRATION DU DOCUMENT (mise en forme reprenant celle de la trame :
+   texte normal pour les réponses attendues/RAS, gras + surlignage pour
+   les réponses notables)
+   ========================================================================= */
+
+function esc(s){
+  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function flagSpan(text){
+  return `<span style="font-weight:bold;background:#fff59d;">${esc(text)}</span>`;
+}
+
+function lineFor(field, answer){
+  const label = cleanLabel(field.label);
+
+  if(field.t === "text"){
+    if(!answer.value) return null;
+    const flagged = field.flag === true;
+    return {text: `${label} : ${flagged ? flagSpan(answer.value) : esc(answer.value)}`};
+  }
+
+  if(field.t === "textarea"){
+    if(!answer.value) return null;
+    const flagged = field.flag === true;
+    return {text: `${label} : ${flagged ? flagSpan(answer.value) : esc(answer.value)}`};
+  }
+
+  if(field.t === "yn"){
+    if(!answer.val) return null;
+    const flagOn = field.flagOn || "Oui";
+    const flagged = answer.val === flagOn;
+    let txt = `${label} : ${flagged ? flagSpan(answer.val.toLowerCase()) : esc(answer.val.toLowerCase())}`;
+    if(answer.detail) txt += ` — ${esc(answer.detail)}`;
+    return {text: txt};
+  }
+
+  if(field.t === "yn3"){
+    if(!answer.val) return null;
+    const flagged = answer.val !== "Non";
+    let txt = `${label} : ${flagged ? flagSpan(answer.val) : esc(answer.val)}`;
+    if(answer.detail) txt += ` — ${esc(answer.detail)}`;
+    return {text: txt};
+  }
+
+  if(field.t === "radio"){
+    if(!answer.val) return null;
+    const opt = field.opts.find(o=>o.v===answer.val);
+    const flagged = opt && opt.flag;
+    let txt = `${label} : ${flagged ? flagSpan(answer.val) : esc(answer.val)}`;
+    if(answer.detail) txt += ` — ${esc(answer.detail)}`;
+    return {text: txt};
+  }
+
+  if(field.t === "multi"){
+    const parts = (answer.selected||[]).map(s=>{
+      const base = s.flag ? flagSpan(s.v) : esc(s.v);
+      return s.detail ? `${base} (${esc(s.detail)})` : base;
+    });
+    if(answer.other) parts.push(flagSpan(answer.other));
+    if(parts.length === 0) return null;
+    return {text: `${label} : ${parts.join(" ; ")}`};
+  }
+
+  if(field.t === "checks"){
+    const items = answer.selected.slice();
+    if(answer.other) items.push(answer.other);
+    if(items.length === 0) return null;
+    return {text: `${label} : ${flagSpan(items.join("; "))}`};
+  }
+
+  return null;
+}
+
+function buildAnamneseHTML(){
+  const data = collectAnswers();
+  const nomEl = document.getElementById("nom");
+  const nom = nomEl ? nomEl.value.trim() : "";
+
+  let body = `<h1 style="text-align:center;">Anamnèse — questionnaire pré-entretien</h1>`;
+  if(nom) body += `<p style="text-align:center;"><strong>${esc(nom)}</strong></p>`;
+  body += `<p style="font-size:10pt;color:#666;">Document généré automatiquement à partir des réponses du patient
+    (${new Date().toLocaleDateString("fr-FR")}). À relire et compléter lors de l'entretien anamnestique.</p>`;
+
+  SECTIONS.forEach(section=>{
+    const lines = [];
+    if(section.fields.some(f=>f.t==="textarea" || f.t==="text")){
+      // handled per-field below, nothing special here
+    }
+    section.fields.forEach(field=>{
+      const answer = data[section.id][field.id];
+      const line = lineFor(field, answer);
+      if(line) lines.push(line.text);
+    });
+    if(lines.length === 0) return; // ne pas afficher les sections sans réponse
+    body += `<h2 style="background:#2E718C;color:#ffffff;padding:6px 10px;font-size:13pt;margin-top:22px;">${esc(section.title)}</h2>`;
+    if(section.note) body += `<p style="font-style:italic;font-size:9.5pt;color:#555;">${esc(section.note)}</p>`;
+    lines.forEach(l=>{
+      body += `<p style="margin:4px 0;font-size:11pt;">${l}</p>`;
+    });
+  });
+
+  return `<!DOCTYPE html>
+  <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+  <head><meta charset="utf-8">
+  <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
+  <style>
+    body{ font-family:Calibri, Arial, sans-serif; }
+    @page{ margin:2cm; }
+  </style>
+  </head>
+  <body>${body}</body></html>`;
+}
+
+function generateWordDoc(){
+  const html = buildAnamneseHTML();
+  const nomEl = document.getElementById("nom");
+  let nom = (nomEl && nomEl.value.trim()) ? nomEl.value.trim().replace(/[^\p{L}\p{N}_-]+/gu,"_") : "patient";
+  const blob = new Blob(["﻿", html], {type:"application/msword"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `Anamnese_${nom}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+
+function printForm(){
+  window.print();
+}
+
+/* =========================================================================
+   ENVOI AUTOMATIQUE PAR EMAIL (via Google Apps Script)
+   Soumission par formulaire caché + iframe cible : évite les problèmes de
+   CORS liés aux URL de déploiement Apps Script (redirections internes
+   Google). La réponse du script n'est pas lisible depuis cette page
+   (iframe cross-origin) : la confirmation affichée est donc optimiste,
+   après un court délai laissant le temps à l'envoi de se faire.
+   ========================================================================= */
+
+function setStatus(text, cls){
+  const el = document.getElementById("sendStatus");
+  if(!el) return;
+  el.textContent = text;
+  el.className = "status " + cls;
+}
+
+function sendByEmail(){
+  if(!GAS_URL || GAS_URL.indexOf("COLLEZ_ICI") !== -1){
+    setStatus("Configuration manquante : ce formulaire n'est pas encore relié au cabinet. Merci de contacter le cabinet directement.", "error");
+    return;
+  }
+
+  const nomEl = document.getElementById("nom");
+  if(!nomEl || !nomEl.value.trim()){
+    setStatus("Merci de renseigner votre nom et prénom avant l'envoi.", "error");
+    if(nomEl) nomEl.focus();
+    return;
+  }
+
+  const html = buildAnamneseHTML();
+
+  const form = document.getElementById("gas_form");
+  form.action = GAS_URL;
+  document.getElementById("gas_nom").value = nomEl.value.trim();
+  document.getElementById("gas_html").value = html;
+  document.getElementById("gas_token").value = GAS_TOKEN;
+
+  setStatus("Envoi en cours…", "sending");
+  form.submit();
+
+  setTimeout(()=>{
+    setStatus("✓ Votre questionnaire a été transmis au cabinet. Vous pouvez fermer cette page.", "sent");
+  }, 2500);
+}
+</script>
+</body>
+</html>
